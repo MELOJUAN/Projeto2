@@ -5,48 +5,38 @@ import com.senac.projeto2.service.CategoriaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("api/categorias")
-@Tag(name="Categoria", description="API para gerenciamento de categorias")
+@RequestMapping("api/categoria")
+@Tag(name="Categoria", description="API para gerenciamento das categorias do sistema")
 public class CategoriaController {
+    private final CategoriaService categoriaService;
 
-    private final CategoriaService service;
-
-    public CategoriaController(CategoriaService service) { this.service = service; }
-
-    @GetMapping
-    @Operation(summary="Listar categorias")
-    public ResponseEntity<List<Categoria>> listar() {
-        return ResponseEntity.ok(service.listar());
+    public CategoriaController(CategoriaService categoriaService) {
+        this.categoriaService = categoriaService;
     }
 
-    @GetMapping("/{id}")
-    @Operation(summary="Buscar categoria por id")
-    public ResponseEntity<Categoria> buscar(@PathVariable int id) {
-        Categoria c = service.buscarPorId(id);
-        return (c == null) ? ResponseEntity.noContent().build() : ResponseEntity.ok(c);
+    @GetMapping("/listar")
+    @Operation(summary = "Listar categorias do sistema")
+    public ResponseEntity<List<Categoria>> listar(){
+        return ResponseEntity.ok(categoriaService.listarCategorias());
     }
 
-    @PostMapping
-    @Operation(summary="Criar categoria")
-    public String criar(@RequestBody Categoria c) {
-        service.salvar(c);
-        return "Categoria criada com sucesso!";
+    @GetMapping("/listarPorIdCategoria/{idCategoria}")
+    @Operation(summary = "Listar categorias do sistema pelo id da categoria")
+    public ResponseEntity<Categoria> listarPorIdCategoria(@PathVariable("idCategoria") Integer idCategoria){
+        Categoria categoria = categoriaService.listarCategoriaPorId(idCategoria);
+        if (categoria == null) {
+            return ResponseEntity.noContent().build();
+        }else{
+            return ResponseEntity.ok(categoria);
+        }
     }
 
-    @PutMapping("/{id}")
-    @Operation(summary="Atualizar categoria")
-    public String atualizar(@PathVariable int id, @RequestBody Categoria c) {
-        return (service.atualizar(id, c) == null) ? "Categoria não encontrada!" : "Categoria atualizada com sucesso!";
-    }
-
-    @DeleteMapping("/{id}")
-    @Operation(summary="Apagar categoria")
-    public String apagar(@PathVariable int id) {
-        return service.deletar(id) ? "Categoria apagada com sucesso!" : "Categoria não encontrada!";
-    }
 }

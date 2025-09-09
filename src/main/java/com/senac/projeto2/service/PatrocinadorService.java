@@ -9,40 +9,17 @@ import java.util.List;
 @Service
 public class PatrocinadorService {
 
-    private final PatrocinadorRepository repository;
+    private final PatrocinadorRepository patrocinadorRepository;
 
-    public PatrocinadorService(PatrocinadorRepository repository) {
-        this.repository = repository;
+    public PatrocinadorService(PatrocinadorRepository patrocinadorRepository) {
+        this.patrocinadorRepository = patrocinadorRepository;
     }
 
-    public List<Patrocinador> listar() {
-        return repository.findAll();
+    public List<Patrocinador> listarPatrocinadores(){
+        return this.patrocinadorRepository.findAll();
     }
 
-    public Patrocinador buscarPorId(int id) {
-        return repository.findById(id).orElse(null);
-    }
-
-    public Patrocinador salvar(Patrocinador p) {
-        return repository.save(p);
-    }
-
-    public Patrocinador atualizar(int id, Patrocinador dados) {
-        Patrocinador atual = buscarPorId(id);
-        if (atual == null) {
-            return null;
-        }
-        atual.setNome(dados.getNome());
-        atual.setRepresentanteNome(dados.getRepresentanteNome());
-        atual.setStatus(dados.getStatus());
-        return repository.save(atual);
-    }
-
-    public boolean deletar(int id) {
-        if (!repository.existsById(id)) {
-            return false;
-        }
-        repository.deleteById(id);
-        return true;
+    public Patrocinador listarPatrocinadorPorId(int idPatrocinador){
+        return this.patrocinadorRepository.findById(idPatrocinador).orElse(null);
     }
 }

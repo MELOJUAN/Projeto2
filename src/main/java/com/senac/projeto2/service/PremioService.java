@@ -8,27 +8,18 @@ import java.util.List;
 
 @Service
 public class PremioService {
-    private final PremioRepository repository;
 
-    public PremioService(PremioRepository repository) { this.repository = repository; }
+    private final PremioRepository premioRepository;
 
-    public List<Premio> listar() { return repository.findAll(); }
-    public Premio buscarPorId(int id) { return repository.findById(id).orElse(null); }
-    public Premio salvar(Premio p) { return repository.save(p); }
-
-    public Premio atualizar(int id, Premio dados) {
-        Premio atual = buscarPorId(id);
-        if (atual == null) return null;
-        atual.setDescricao(dados.getDescricao());
-        atual.setOrdemPremiacao(dados.getOrdemPremiacao());
-        atual.setCategoria(dados.getCategoria());
-        atual.setStatus(dados.getStatus());
-        return repository.save(atual);
+    public PremioService(PremioRepository premioRepository) {
+        this.premioRepository = premioRepository;
     }
 
-    public boolean deletar(int id) {
-        if (!repository.existsById(id)) return false;
-        repository.deleteById(id);
-        return true;
+    public List<Premio> listarPremios(){
+        return this.premioRepository.findAll();
+    }
+
+    public Premio listarPremioPorId(int idUsuario){
+        return this.premioRepository.findById(idUsuario).orElse(null);
     }
 }

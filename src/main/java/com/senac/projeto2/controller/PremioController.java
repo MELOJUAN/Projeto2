@@ -5,48 +5,38 @@ import com.senac.projeto2.service.PremioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("api/premios")
-@Tag(name="Premio", description="API para gerenciamento de prêmios")
+@RequestMapping("api/premio")
+@Tag(name="Premio", description="API para gerenciamento dos premios do sistema")
 public class PremioController {
+    private final PremioService premioService;
 
-    private final PremioService service;
-
-    public PremioController(PremioService service) { this.service = service; }
-
-    @GetMapping
-    @Operation(summary="Listar prêmios")
-    public ResponseEntity<List<Premio>> listar() {
-        return ResponseEntity.ok(service.listar());
+    public PremioController(PremioService premioService) {
+        this.premioService = premioService;
     }
 
-    @GetMapping("/{id}")
-    @Operation(summary="Buscar prêmio por id")
-    public ResponseEntity<Premio> buscar(@PathVariable int id) {
-        Premio p = service.buscarPorId(id);
-        return (p == null) ? ResponseEntity.noContent().build() : ResponseEntity.ok(p);
+    @GetMapping("/listar")
+    @Operation(summary = "Listar usuarios do sistema")
+    public ResponseEntity<List<Premio>> listar(){
+        return ResponseEntity.ok(premioService.listarPremios());
     }
 
-    @PostMapping
-    @Operation(summary="Criar prêmio")
-    public String criar(@RequestBody Premio p) {
-        service.salvar(p);
-        return "Prêmio criado com sucesso!";
+    @GetMapping("/listarPorIdpremio/{idPremio}")
+    @Operation(summary = "Listar premios do sistema pelo id do premio")
+    public ResponseEntity<Premio> listarPorIdpremio(@PathVariable("idPremio") Integer idPremio){
+        Premio premio = premioService.listarPremioPorId(idPremio);
+        if (premio == null) {
+            return ResponseEntity.noContent().build();
+        }else{
+            return ResponseEntity.ok(premio);
+        }
     }
 
-    @PutMapping("/{id}")
-    @Operation(summary="Atualizar prêmio")
-    public String atualizar(@PathVariable int id, @RequestBody Premio p) {
-        return (service.atualizar(id, p) == null) ? "Prêmio não encontrado!" : "Prêmio atualizado com sucesso!";
-    }
-
-    @DeleteMapping("/{id}")
-    @Operation(summary="Apagar prêmio")
-    public String apagar(@PathVariable int id) {
-        return service.deletar(id) ? "Prêmio apagado com sucesso!" : "Prêmio não encontrado!";
-    }
 }

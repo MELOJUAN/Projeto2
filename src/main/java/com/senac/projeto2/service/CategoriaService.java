@@ -9,29 +9,17 @@ import java.util.List;
 @Service
 public class CategoriaService {
 
-    private final CategoriaRepository repository;
+    private final CategoriaRepository categoriaRepository;
 
-    public CategoriaService(CategoriaRepository repository) {
-        this.repository = repository;
+    public CategoriaService(CategoriaRepository categoriaRepository) {
+        this.categoriaRepository = categoriaRepository;
     }
 
-    public List<Categoria> listar() { return repository.findAll(); }
-
-    public Categoria buscarPorId(int id) { return repository.findById(id).orElse(null); }
-
-    public Categoria salvar(Categoria c) { return repository.save(c); }
-
-    public Categoria atualizar(int id, Categoria dados) {
-        Categoria atual = buscarPorId(id);
-        if (atual == null) return null;
-        atual.setNome(dados.getNome());
-        atual.setStatus(dados.getStatus());
-        return repository.save(atual);
+    public List<Categoria> listarCategorias(){
+        return this.categoriaRepository.findAll();
     }
 
-    public boolean deletar(int id) {
-        if (!repository.existsById(id)) return false;
-        repository.deleteById(id);
-        return true;
+    public Categoria listarCategoriaPorId(int idCategoria){
+        return this.categoriaRepository.findById(idCategoria).orElse(null);
     }
 }
